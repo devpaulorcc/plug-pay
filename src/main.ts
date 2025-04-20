@@ -7,8 +7,7 @@ async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(CoreModule);
 
     app.enableCors({
-        origin: 'https://payment-client.vercel.app',
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        origin: ['http://127.0.0.1:5500', 'https://payment-client.vercel.app'],
         credentials: true,
     });
 
