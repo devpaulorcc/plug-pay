@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CreatePaymentLinkUseCase } from '../use-cases/create-payment-link.use-case';
 import { PreferenceDto } from '../dtos/preference.dto';
 import { CreatePaymentHtmlUseCase } from '../use-cases/create-payment-html.use-case';
 import { CreatePaymentUseCase } from '../use-cases/create-payment.use-case';
+import { BricksDto } from '../dtos/bricks.dto';
+import { CardPayment } from '../dtos/card-payment.dto';
 
 @Controller('/payment')
 export class PaymentController {
@@ -21,25 +23,32 @@ export class PaymentController {
         try {
             const url =
                 await this.createPaymentLinkUseCase.execute(preferenceDto);
-            return response.json({ success: true, url });
+            return response.json({ url });
         } catch (error) {
-            return response.json({ success: false, error });
+            return response.json({ error });
         }
     }
 
-    @Get('/form')
+    @Post('/form')
     public async getBricksForm(
-        @Query('amount') amount: number,
-    ): Promise<string> {
-        return await this.createPaymentHtmlUseCase.execute(Number(amount));
+        @Res() response: Response,
+        @Body() bricksDto: BricksDto,
+    ): Promise<Response> {
+        console.log(bricksDto);
+
+        try {
+            const formPayment =
+                await this.createPaymentHtmlUseCase.execute(bricksDto);
+            return response.json({ formPayment });
+        } catch (error) {
+            return response.json({ error });
+        }
     }
 
-    @Post('/process')
+    @Post('/charge')
     public async processPaymentWithBricks(
-        @Body() cardFormData: object,
+        @Body() cardPayment: CardPayment,
     ): Promise<object> {
-        console.log(await this.createPaymentUseCase.execute(cardFormData));
-
-        return await this.createPaymentUseCase.execute(cardFormData);
+        return await this.createPaymentUseCase.execute(cardPayment);
     }
 }

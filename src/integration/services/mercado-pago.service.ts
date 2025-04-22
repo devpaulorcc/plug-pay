@@ -77,10 +77,8 @@ export class MercadoPagoService implements PaymentGatewayContract {
             console.log("Checkout Bricks está pronto");
           },
           onSubmit: async (cardFormData) => {
-            console.log("Dados do cartão:", cardFormData);
-            
             try {
-                                const response = await fetch('/api/payment/process', {
+                                const response = await fetch('http://localhost:3000/payment/charge', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -89,8 +87,6 @@ export class MercadoPagoService implements PaymentGatewayContract {
                                 });
 
                                 const paymentResult = await response.json();
-                                console.log("Resultado do pagamento:", paymentResult);
-                                // Aqui, você pode exibir um retorno para o usuário
                             } catch (error) {
                                 console.error("Erro ao processar pagamento:", error);
                             }
@@ -114,8 +110,6 @@ export class MercadoPagoService implements PaymentGatewayContract {
             'X-Idempotency-Key': randomUUID(),
         };
 
-        console.log('paymentPayload', paymentPayload);
-
         try {
             const responseApi = await this.httpClientService.send({
                 method: 'POST',
@@ -123,8 +117,6 @@ export class MercadoPagoService implements PaymentGatewayContract {
                 body: paymentPayload,
                 headers: requestHeaders,
             });
-
-            console.log('responseApi.body', responseApi.body);
 
             return responseApi.body;
         } catch (error) {

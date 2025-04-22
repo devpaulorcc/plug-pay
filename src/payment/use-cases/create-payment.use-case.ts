@@ -10,8 +10,8 @@ export class CreatePaymentUseCase {
             token: cardFormData.token,
             issuer_id: cardFormData.issuerId,
             payment_method_id: cardFormData.paymentMethodId,
-            transaction_amount: cardFormData.transactionAmount ?? 100,
-            installments: cardFormData.installments ?? 1,
+            transaction_amount: cardFormData.transactionAmount ?? 2,
+            installments: cardFormData.installments,
             payer: {
                 email: cardFormData.payer.email,
                 identification: {
