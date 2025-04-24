@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentGatewayContract } from 'src/integration/contracts/payment-gateway.contract';
+import { CardPayment } from '../dtos/card-payment.dto';
 
 @Injectable()
 export class CreatePaymentUseCase {
     constructor(private readonly paymentsService: PaymentGatewayContract) {}
 
-    public async execute(cardFormData: any): Promise<object> {
+    public async execute(cardPayment: CardPayment): Promise<object> {
         const payload = {
-            token: cardFormData.token,
-            issuer_id: cardFormData.issuerId,
-            payment_method_id: cardFormData.paymentMethodId,
-            transaction_amount: cardFormData.transactionAmount ?? 2,
-            installments: cardFormData.installments,
+            token: cardPayment.token,
+            issuer_id: cardPayment.issuer_id,
+            payment_method_id: cardPayment.payment_method_id,
+            transaction_amount: cardPayment.transaction_amount,
+            installments: cardPayment.installments,
             payer: {
-                email: cardFormData.payer.email,
+                email: cardPayment.payer.email,
                 identification: {
-                    type: cardFormData.payer.identification.type,
-                    number: cardFormData.payer.identification.number,
+                    type: cardPayment.payer.identification.type,
+                    number: cardPayment.payer.identification.number,
                 },
             },
         };
