@@ -5,9 +5,10 @@ import { AxiosService } from './services/axios.service';
 import { LoggerService } from './services/logger.service';
 import { PaymentGatewayContract } from 'src/integration/contracts/payment-gateway.contract';
 import { MercadoPagoService } from 'src/integration/services/mercado-pago.service';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-    imports: [PaymentModule],
+    imports: [PaymentModule, UserModule],
     controllers: [],
     providers: [
         LoggerService,
