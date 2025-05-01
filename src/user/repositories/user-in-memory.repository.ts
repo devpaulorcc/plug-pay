@@ -31,14 +31,16 @@ export class UserInMemoryRepository {
                 user.email === authenticationUserDto.email &&
                 isPasswordCorrect
             ) {
+                console.log('auth user', user);
                 return user;
             }
         }
-
         return null;
     }
 
-    public async register(registerUser: UserEntity): Promise<void> {
+    public async register(registerUser: UserEntity): Promise<UserEntity> {
+        console.log('Novo user', registerUser);
         await this.users.push(registerUser);
+        return registerUser;
     }
 }

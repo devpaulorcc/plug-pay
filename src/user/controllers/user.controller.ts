@@ -48,11 +48,14 @@ export class UserController {
     @Post()
     public async register(
         @Body() registerUserDto: RegisterUserDto,
-    ): Promise<void> {
+        @Res() response: Response,
+    ): Promise<Response> {
         try {
-            await this.registerUserUseCase.execute(registerUserDto);
+            const user =
+                await this.registerUserUseCase.execute(registerUserDto);
+            return response.status(HttpStatus.CREATED).json({ user });
         } catch (error) {
-            this.loggerService.error(error.message);
+            return response.status(HttpStatus.BAD_REQUEST).json(error.message);
         }
     }
 }
