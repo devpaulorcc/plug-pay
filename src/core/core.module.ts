@@ -5,9 +5,12 @@ import { AxiosService } from './services/axios.service';
 import { LoggerService } from './services/logger.service';
 import { PaymentGatewayContract } from 'src/integration/contracts/payment-gateway.contract';
 import { MercadoPagoService } from 'src/integration/services/mercado-pago.service';
+import { UserModule } from 'src/user/user.module';
+import { HashingClientServiceContract } from './contracts/hashing-client-service.contract';
+import { BcryptService } from './services/bcrypt.service';
 
 @Module({
-    imports: [PaymentModule],
+    imports: [PaymentModule, UserModule],
     controllers: [],
     providers: [
         LoggerService,
@@ -19,6 +22,10 @@ import { MercadoPagoService } from 'src/integration/services/mercado-pago.servic
             provide: PaymentGatewayContract,
             useClass: MercadoPagoService,
         },
+        {
+            provide: HashingClientServiceContract,
+            useClass: BcryptService,
+        },
     ],
     exports: [
         {
@@ -28,6 +35,10 @@ import { MercadoPagoService } from 'src/integration/services/mercado-pago.servic
         {
             provide: PaymentGatewayContract,
             useClass: MercadoPagoService,
+        },
+        {
+            provide: HashingClientServiceContract,
+            useClass: BcryptService,
         },
     ],
 })
