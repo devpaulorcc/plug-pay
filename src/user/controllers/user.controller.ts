@@ -3,6 +3,7 @@ import {
     Controller,
     HttpStatus,
     LoggerService,
+    Param,
     Post,
     Res,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { AuthenticationUserDto } from '../dtos/authentication-user.dto';
 import { AuthenticationUserUseCase } from '../use-cases/authentication-user.use-case';
 import { Response } from 'express';
 import { UserUnauthorized } from '../exceptions/user-unauthorized.exception';
+import { UpdateUserPlanUseCase } from '../use-cases/update-user-plan.use-case';
 
 @Controller('user')
 export class UserController {
@@ -20,6 +22,7 @@ export class UserController {
     constructor(
         private readonly authenticationUserUseCase: AuthenticationUserUseCase,
         private readonly registerUserUseCase: RegisterUserUseCase,
+        private readonly updateUserPlanUseCase: UpdateUserPlanUseCase,
     ) {}
 
     @Post('/auth')
@@ -56,6 +59,24 @@ export class UserController {
             return response.status(HttpStatus.CREATED).json({ user });
         } catch (error) {
             return response.status(HttpStatus.BAD_REQUEST).json(error.message);
+        }
+    }
+
+    @Post('/plan/:id')
+    public async updatePlan(
+        @Param('id') userId: string,
+        @Res() response: Response,
+    ): Promise<Response> {
+        try {
+            const updatedUser =
+                await this.updateUserPlanUseCase.execute(userId);
+            return response.status(HttpStatus.OK).json({
+                user: updatedUser,
+            });
+        } catch (error) {
+            return response
+                .status(HttpStatus.BAD_REQUEST)
+                .json({ message: error.message });
         }
     }
 }

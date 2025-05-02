@@ -34,8 +34,6 @@ export class PaymentController {
         @Res() response: Response,
         @Body() bricksDto: BricksDto,
     ): Promise<Response> {
-        console.log(bricksDto);
-
         try {
             const formPayment =
                 await this.createPaymentHtmlUseCase.execute(bricksDto);
@@ -50,5 +48,15 @@ export class PaymentController {
         @Body() cardPayment: CardPayment,
     ): Promise<object> {
         return await this.createPaymentUseCase.execute(cardPayment);
+    }
+
+    // TODO:Make a paid plan inquiry
+    @Post('/plans')
+    public async planos(): Promise<object> {
+        return {
+            price: 1,
+            transactionAmount: 1,
+            description: 'Compra de plano PRO na PayJS.',
+        };
     }
 }
