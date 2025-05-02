@@ -5,6 +5,7 @@ import { UserController } from './controllers/user.controller';
 import { HashingClientServiceContract } from 'src/core/contracts/hashing-client-service.contract';
 import { BcryptService } from 'src/core/services/bcrypt.service';
 import { AuthenticationUserUseCase } from './use-cases/authentication-user.use-case';
+import { UpdateUserPlanUseCase } from './use-cases/update-user-plan.use-case';
 
 @Module({
     imports: [],
@@ -13,6 +14,7 @@ import { AuthenticationUserUseCase } from './use-cases/authentication-user.use-c
         RegisterUserUseCase,
         AuthenticationUserUseCase,
         UserInMemoryRepository,
+        UpdateUserPlanUseCase,
         {
             provide: HashingClientServiceContract,
             useClass: BcryptService,

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity, UserPlans } from '../entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { HashingClientServiceContract } from 'src/core/contracts/hashing-client-service.contract';
 import { AuthenticationUserDto } from '../dtos/authentication-user.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UserInMemoryRepository {
@@ -9,14 +10,7 @@ export class UserInMemoryRepository {
         private readonly hashingClientService: HashingClientServiceContract,
     ) {}
 
-    private users: Array<UserEntity> = [
-        {
-            name: 'Paulo',
-            email: 'paulo@gmail.com',
-            password: '123123123',
-            plan: UserPlans.PRO,
-        },
-    ];
+    private users: Array<UserEntity> = [];
 
     public async auth(
         authenticationUserDto: AuthenticationUserDto,
@@ -31,7 +25,6 @@ export class UserInMemoryRepository {
                 user.email === authenticationUserDto.email &&
                 isPasswordCorrect
             ) {
-                console.log('auth user', user);
                 return user;
             }
         }
@@ -39,8 +32,28 @@ export class UserInMemoryRepository {
     }
 
     public async register(registerUser: UserEntity): Promise<UserEntity> {
-        console.log('Novo user', registerUser);
+        registerUser.id = randomUUID();
         await this.users.push(registerUser);
         return registerUser;
+    }
+
+    public async findById(userId: string): Promise<UserEntity | null> {
+        const user = this.users.find((user) => user.id === userId);
+        return user ?? null;
+    }
+
+    public async updateUser(
+        updatedUser: UserEntity,
+    ): Promise<UserEntity | null> {
+        const index = this.users.findIndex(
+            (user) => user.id === updatedUser.id,
+        );
+
+        if (index === -1) {
+            return null;
+        }
+
+        this.users[index] = updatedUser;
+        return this.users[index];
     }
 }
