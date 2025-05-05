@@ -6,6 +6,7 @@ import {
     Param,
     Post,
     Res,
+    UseGuards,
 } from '@nestjs/common';
 import { RegisterUserUseCase } from '../use-cases/register-user.use-case';
 import { RegisterUserDto } from '../dtos/register-user.dto';
@@ -14,6 +15,8 @@ import { AuthenticationUserUseCase } from '../use-cases/authentication-user.use-
 import { Response } from 'express';
 import { UserUnauthorized } from '../exceptions/user-unauthorized.exception';
 import { UpdateUserPlanUseCase } from '../use-cases/update-user-plan.use-case';
+import { GetPaymentsUserUseCase } from '../use-cases/get-payments-user.use-case';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -23,6 +26,7 @@ export class UserController {
         private readonly authenticationUserUseCase: AuthenticationUserUseCase,
         private readonly registerUserUseCase: RegisterUserUseCase,
         private readonly updateUserPlanUseCase: UpdateUserPlanUseCase,
+        private readonly getPaymentsUserUseCase: GetPaymentsUserUseCase,
     ) {}
 
     @Post('/auth')
@@ -72,6 +76,25 @@ export class UserController {
                 await this.updateUserPlanUseCase.execute(userId);
             return response.status(HttpStatus.OK).json({
                 user: updatedUser,
+            });
+        } catch (error) {
+            return response
+                .status(HttpStatus.BAD_REQUEST)
+                .json({ message: error.message });
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/:userId')
+    public async getPayments(
+        @Param('userId') userId: string,
+        @Res() response: Response,
+    ): Promise<Response> {
+        try {
+            const paymentsUser =
+                await this.getPaymentsUserUseCase.execute(userId);
+            return response.status(HttpStatus.OK).json({
+                payments: paymentsUser,
             });
         } catch (error) {
             return response
