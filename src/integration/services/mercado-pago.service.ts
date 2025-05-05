@@ -123,4 +123,38 @@ export class MercadoPagoService implements PaymentGatewayContract {
             throw new Error(`Erro ao criar pagamento: ${error.message}`);
         }
     }
+
+    public async createPixCode(paymentPayload: object): Promise<string> {
+        const requestHeaders = {
+            Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json',
+            'X-Idempotency-Key': randomUUID(),
+        };
+
+        try {
+            const responseApi = await this.httpClientService.send({
+                method: 'POST',
+                url: 'https://api.mercadopago.com/v1/payments',
+                body: paymentPayload,
+                headers: requestHeaders,
+            });
+
+            const qrCode =
+                responseApi.body?.point_of_interaction?.transaction_data
+                    ?.qr_code;
+
+            if (!qrCode) {
+                throw new Error(
+                    'Código Pix não encontrado na resposta da API.',
+                );
+            }
+
+            return qrCode;
+        } catch (error) {
+            this.loggerService.error(
+                `Erro ao gerar código Pix: ${error.message}`,
+            );
+            throw new Error(`Erro ao gerar código Pix: ${error.message}`);
+        }
+    }
 }

@@ -6,6 +6,8 @@ import { CreatePaymentHtmlUseCase } from '../use-cases/create-payment-html.use-c
 import { CreatePaymentUseCase } from '../use-cases/create-payment.use-case';
 import { BricksDto } from '../dtos/bricks.dto';
 import { CardPayment } from '../dtos/card-payment.dto';
+import { CreatePixPaymentPixDto } from '../dtos/payment-payload-pix.dto';
+import { CreatePaymentPixUseCase } from '../use-cases/create-payment-pix.use-case';
 
 @Controller('/payment')
 export class PaymentController {
@@ -13,6 +15,7 @@ export class PaymentController {
         private readonly createPaymentLinkUseCase: CreatePaymentLinkUseCase,
         private readonly createPaymentHtmlUseCase: CreatePaymentHtmlUseCase,
         private readonly createPaymentUseCase: CreatePaymentUseCase,
+        private readonly createPaymentPixUseCase: CreatePaymentPixUseCase,
     ) {}
 
     @Post()
@@ -58,5 +61,20 @@ export class PaymentController {
             transactionAmount: 1,
             description: 'Compra de plano PRO na PayJS.',
         };
+    }
+
+    @Post('/pix')
+    public async generatePix(
+        @Res() response: Response,
+        @Body() createPixPaymentPixDto: CreatePixPaymentPixDto,
+    ): Promise<Response> {
+        try {
+            const pix = await this.createPaymentPixUseCase.execute(
+                createPixPaymentPixDto,
+            );
+            return response.json({ pix });
+        } catch (error) {
+            return response.json({ error });
+        }
     }
 }

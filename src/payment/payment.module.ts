@@ -6,6 +6,8 @@ import { CoreModule } from 'src/core/core.module';
 import { CreatePaymentLinkUseCase } from './use-cases/create-payment-link.use-case';
 import { CreatePaymentHtmlUseCase } from './use-cases/create-payment-html.use-case';
 import { CreatePaymentUseCase } from './use-cases/create-payment.use-case';
+import { CreatePaymentPixUseCase } from './use-cases/create-payment-pix.use-case';
+import { PaymentsInMemoryRepository } from './repositories/payments-in-memory.repository';
 
 @Module({
     imports: [forwardRef(() => CoreModule)],
@@ -14,10 +16,12 @@ import { CreatePaymentUseCase } from './use-cases/create-payment.use-case';
         CreatePaymentLinkUseCase,
         CreatePaymentHtmlUseCase,
         CreatePaymentUseCase,
+        CreatePaymentPixUseCase,
         {
             provide: PaymentGatewayContract,
             useClass: MercadoPagoService,
         },
+        PaymentsInMemoryRepository,
     ],
 })
 export class PaymentModule {}
